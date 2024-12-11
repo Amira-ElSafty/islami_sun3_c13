@@ -1,5 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:islami_sun3_c13/app_colors.dart';
+import 'package:islami_sun3_c13/home/tabs/hadeth/hadeth_tab.dart';
+import 'package:islami_sun3_c13/home/tabs/quran/quran_tab.dart';
+import 'package:islami_sun3_c13/home/tabs/radio/radio_tab.dart';
+import 'package:islami_sun3_c13/home/tabs/sebha/sebha_tab.dart';
+import 'package:islami_sun3_c13/home/tabs/time/time_tab.dart';
 
 class HomeScreen extends StatefulWidget {
   static const String routeName = 'home_screen';
@@ -24,6 +29,13 @@ class _HomeScreenState extends State<HomeScreen> {
     'assets/images/icon_sebha.png',
     'assets/images/icon_radio.png',
     'assets/images/icon_time.png',
+  ];
+  List<Widget> tabs = [
+    QuranTab(),
+    HadethTab(),
+    SebhaTab(),
+    RadioTab(),
+    TimeTab()
   ];
 
   @override
@@ -61,6 +73,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       icon: builtItemInBottomNavBar(index: 4), label: 'Quran'),
                 ]),
           ),
+          body: tabs[selectedIndex],
         ),
       ],
     );
