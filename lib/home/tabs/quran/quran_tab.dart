@@ -4,7 +4,54 @@ import 'package:islami_sun3_c13/home/tabs/quran/sura_details_screen.dart';
 import 'package:islami_sun3_c13/home/tabs/quran/sura_list_widget.dart';
 import 'package:islami_sun3_c13/model/sura_model.dart';
 
-class QuranTab extends StatelessWidget {
+class QuranTab extends StatefulWidget {
+  @override
+  State<QuranTab> createState() => _QuranTabState();
+}
+
+class _QuranTabState extends State<QuranTab> {
+  void addSuraList() {
+    for (int i = 0; i < 114; i++) {
+      SuraModel.suraList.add(SuraModel(
+          suraEnglishName: SuraModel.suraEnglishNameList[i],
+          suraArabicName: SuraModel.suraArabicNameList[i],
+          numOfVerses: SuraModel.numOfVersesList[i],
+          fileName: '${i + 1}.txt'));
+    }
+  }
+
+  // void addSuraList(){
+  //   for(int i = 0 ; i < 114 ; i++){
+  //     SuraModel.suraList.add(SuraModel(
+  //         suraEnglishName: SuraModel.suraEnglishNameList[i],
+  //         suraArabicName: SuraModel.suraArabicNameList[i],
+  //         numOfVerses: SuraModel.numOfVersesList[i],
+  //         fileName: '${i+1}.txt'
+  //     ));
+  //   }
+  // }
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    addSuraList();
+
+    /// 114
+  }
+
+  List<SuraModel> filterList = SuraModel.suraList;
+
+  /// 114
+  String searchText = '';
+
+  List<SuraModel> searchResultList = [];
+
+  /*
+  suraList => 114
+  searchText
+  searchText => suraList => item
+   */
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -14,6 +61,7 @@ class QuranTab extends StatelessWidget {
         children: [
           Center(child: Image.asset('assets/images/logo.png')),
           TextField(
+            style: TextStyle(color: AppColors.whiteColor),
             cursorColor: AppColors.whiteColor,
             decoration: InputDecoration(
                 hintText: 'Sura Name',
@@ -27,6 +75,16 @@ class QuranTab extends StatelessWidget {
                 prefixIcon: const ImageIcon(
                     color: AppColors.primaryDark,
                     AssetImage('assets/images/icon_search.png'))),
+            onChanged: (text) {
+              searchText = text;
+              searchResultList = SuraModel.suraList.where((sura) {
+                return sura.suraArabicName.contains(searchText) ||
+                    sura.suraEnglishName
+                        .toLowerCase()
+                        .contains(searchText.toLowerCase());
+              }).toList();
+              setState(() {});
+            },
           ),
           const SizedBox(
             height: 20,
@@ -82,13 +140,24 @@ class QuranTab extends StatelessWidget {
               return InkWell(
                   onTap: () {
                     Navigator.of(context).pushNamed(SuraDetailsScreen.routeName,
-                        arguments: SuraModel.getSuraModel(index));
+                        arguments:
+                            // searchResultList.isNotEmpty?
+                            //     searchResultList[index]
+                            //     :
+                            filterList[index]);
                   },
                   child: SuraListWidget(
-                    suraModel: SuraModel.getSuraModel(index),
+                    index: index,
+                    suraModel:
+                        // searchResultList.isNotEmpty?
+                        //     searchResultList[index]:
+                        filterList[index],
                   ));
             },
-            itemCount: SuraModel.getItemCount(),
+            itemCount:
+                // searchResultList.isNotEmpty?
+                //     searchResultList.length:
+                filterList.length,
           ))
         ],
       ),
