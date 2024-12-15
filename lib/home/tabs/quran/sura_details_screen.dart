@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:islami_sun3_c13/app_colors.dart';
-import 'package:islami_sun3_c13/home/tabs/quran/sura_content_item.dart';
 import 'package:islami_sun3_c13/model/sura_model.dart';
 
 class SuraDetailsScreen extends StatefulWidget {
@@ -13,12 +12,15 @@ class SuraDetailsScreen extends StatefulWidget {
 
 class _SuraDetailsScreenState extends State<SuraDetailsScreen> {
   List<String> verses = [];
-
+  String contentSura = '';
   @override
   Widget build(BuildContext context) {
     var args = ModalRoute.of(context)?.settings.arguments as SuraModel;
+    // if (verses.isEmpty) {
+    //   loadSuraFile(args.fileName);
+    // }
     if (verses.isEmpty) {
-      loadSuraFile(args.fileName);
+      loadSuraFile(args.index);
     }
     return Scaffold(
       appBar: AppBar(
@@ -52,21 +54,36 @@ class _SuraDetailsScreenState extends State<SuraDetailsScreen> {
                 height: 25,
               ),
               Expanded(
-                child: verses.isEmpty
-                    ? Center(
+                  child: contentSura.isEmpty
+                      ? Center(
                         child: CircularProgressIndicator(
                         color: AppColors.primaryDark,
                       ))
-                    : ListView.builder(
-                        itemBuilder: (context, index) {
-                          return SuraContentItem(
-                            content: verses[index],
-                            index: index,
-                          );
-                        },
-                        itemCount: verses.length,
-                      ),
-              ),
+                      : SingleChildScrollView(
+                          child: Text(
+                            contentSura,
+                            textDirection: TextDirection.rtl,
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                                color: AppColors.primaryDark, fontSize: 18),
+                          ),
+                        )),
+              // Expanded(
+              //   child: verses.isEmpty
+              //       ? Center(
+              //           child: CircularProgressIndicator(
+              //           color: AppColors.primaryDark,
+              //         ))
+              //       : ListView.builder(
+              //           itemBuilder: (context, index) {
+              //             return SuraContentItem(
+              //               content: verses[index],
+              //               index: index,
+              //             );
+              //           },
+              //           itemCount: verses.length,
+              //         ),
+              // ),
             ],
           ),
         ],
@@ -74,17 +91,27 @@ class _SuraDetailsScreenState extends State<SuraDetailsScreen> {
     );
   }
 
-  void loadSuraFile(String fileName) async {
-    String suraContent = await rootBundle.loadString('assets/files/$fileName');
-    List<String> suraLines = suraContent.split('\n');
-    verses = suraLines;
-    setState(() {});
-  }
+  // void loadSuraFile(String fileName) async {
+  //   String suraContent = await rootBundle.loadString('assets/files/$fileName');
+  //   List<String> suraLines = suraContent.split('\n');
+  //   verses = suraLines;
+  //   setState(() {});
+  // }
 // void loadSuraFile(int index) async {
 //   String suraContent =
-//       await rootBundle.loadString('assets/files/${index + 1}.txt');
+//       await rootBundle.loadString('assets/files/$index.txt');
 //   List<String> suraLines = suraContent.split('\n');
 //   verses = suraLines;
 //   setState(() {});
 // }
+  void loadSuraFile(int index) async {
+    String suraContent = await rootBundle.loadString('assets/files/$index.txt');
+    List<String> suraLines = suraContent.split('\n');
+    for (int i = 0; i < suraLines.length; i++) {
+      suraLines[i] += '[${i + 1}]';
+    }
+    contentSura = suraLines.join();
+    // verses = suraLines;
+    setState(() {});
+  }
 }

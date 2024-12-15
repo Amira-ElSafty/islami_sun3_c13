@@ -10,26 +10,26 @@ class QuranTab extends StatefulWidget {
 }
 
 class _QuranTabState extends State<QuranTab> {
+  // void addSuraList() {
+  //   for (int i = 0; i < 114; i++) {
+  //     SuraModel.suraList.add(SuraModel(
+  //         suraEnglishName: SuraModel.suraEnglishNameList[i],
+  //         suraArabicName: SuraModel.suraArabicNameList[i],
+  //         numOfVerses: SuraModel.numOfVersesList[i],
+  //         fileName: '${i + 1}.txt'));
+  //   }
+  // }
+
   void addSuraList() {
     for (int i = 0; i < 114; i++) {
       SuraModel.suraList.add(SuraModel(
           suraEnglishName: SuraModel.suraEnglishNameList[i],
           suraArabicName: SuraModel.suraArabicNameList[i],
           numOfVerses: SuraModel.numOfVersesList[i],
-          fileName: '${i + 1}.txt'));
+          index: i + 1));
     }
   }
 
-  // void addSuraList(){
-  //   for(int i = 0 ; i < 114 ; i++){
-  //     SuraModel.suraList.add(SuraModel(
-  //         suraEnglishName: SuraModel.suraEnglishNameList[i],
-  //         suraArabicName: SuraModel.suraArabicNameList[i],
-  //         numOfVerses: SuraModel.numOfVersesList[i],
-  //         fileName: '${i+1}.txt'
-  //     ));
-  //   }
-  // }
   @override
   void initState() {
     // TODO: implement initState
@@ -44,7 +44,7 @@ class _QuranTabState extends State<QuranTab> {
   /// 114
   String searchText = '';
 
-  List<SuraModel> searchResultList = [];
+  // List<SuraModel> searchResultList = [];
 
   /*
   suraList => 114
@@ -77,7 +77,7 @@ class _QuranTabState extends State<QuranTab> {
                     AssetImage('assets/images/icon_search.png'))),
             onChanged: (text) {
               searchText = text;
-              searchResultList = SuraModel.suraList.where((sura) {
+              filterList = SuraModel.suraList.where((sura) {
                 return sura.suraArabicName.contains(searchText) ||
                     sura.suraEnglishName
                         .toLowerCase()
@@ -147,7 +147,7 @@ class _QuranTabState extends State<QuranTab> {
                             filterList[index]);
                   },
                   child: SuraListWidget(
-                    index: index,
+                    // index: index,
                     suraModel:
                         // searchResultList.isNotEmpty?
                         //     searchResultList[index]:
