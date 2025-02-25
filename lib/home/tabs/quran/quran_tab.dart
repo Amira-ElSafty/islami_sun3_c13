@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:islami_sun3_c13/app_colors.dart';
 import 'package:islami_sun3_c13/home/tabs/quran/sura_details_screen.dart';
 import 'package:islami_sun3_c13/home/tabs/quran/sura_list_widget.dart';
 import 'package:islami_sun3_c13/model/sura_model.dart';
+import 'package:islami_sun3_c13/utils/app_styles.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
+import '../../../utils/app_colors.dart';
 
 class QuranTab extends StatefulWidget {
   @override
@@ -35,6 +38,7 @@ class _QuranTabState extends State<QuranTab> {
     // TODO: implement initState
     super.initState();
     addSuraList();
+    loadLastSura();
 
     /// 114
   }
@@ -43,6 +47,7 @@ class _QuranTabState extends State<QuranTab> {
 
   /// 114
   String searchText = '';
+  Map<String, String> loadSura = {};
 
   // List<SuraModel> searchResultList = [];
 
@@ -54,6 +59,7 @@ class _QuranTabState extends State<QuranTab> {
 
   @override
   Widget build(BuildContext context) {
+    // loadLastSura();
     return Container(
       margin: const EdgeInsets.all(20),
       child: Column(
@@ -65,7 +71,7 @@ class _QuranTabState extends State<QuranTab> {
             cursorColor: AppColors.whiteColor,
             decoration: InputDecoration(
                 hintText: 'Sura Name',
-                hintStyle: const TextStyle(color: Colors.white),
+                hintStyle: AppStyles.bold16White,
                 enabledBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12),
                     borderSide: const BorderSide(color: AppColors.primaryDark)),
@@ -89,38 +95,13 @@ class _QuranTabState extends State<QuranTab> {
           const SizedBox(
             height: 20,
           ),
-          const Text(
-            'Most Recently ',
-            style: TextStyle(color: Colors.white),
-          ),
+          searchText.isNotEmpty ? SizedBox() : builtMostRecentlyWidget(),
           const SizedBox(
             height: 10,
           ),
-          Container(
-            decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(20),
-                color: AppColors.primaryDark),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                const Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text('Sura En'),
-                    Text('Sura Ar'),
-                    Text('Aya Num'),
-                  ],
-                ),
-                Image.asset('assets/images/most_recently_image.png')
-              ],
-            ),
-          ),
-          const SizedBox(
-            height: 10,
-          ),
-          const Text(
+          Text(
             'Suras List',
-            style: TextStyle(color: Colors.white),
+            style: AppStyles.bold16White,
           ),
           const SizedBox(
             height: 10,
@@ -138,7 +119,15 @@ class _QuranTabState extends State<QuranTab> {
             },
             itemBuilder: (context, index) {
               return InkWell(
-                  onTap: () {
+                  onTap: () async {
+                    // save data
+                    saveLastSura(
+                        suraEnName: filterList[index].suraEnglishName,
+                        suraArName: filterList[index].suraArabicName,
+                        numOfVerses: filterList[index].numOfVerses);
+                    // Future.delayed(Duration(seconds: 2),(){
+                    //   loadLastSura();
+                    // });
                     Navigator.of(context).pushNamed(SuraDetailsScreen.routeName,
                         arguments:
                             // searchResultList.isNotEmpty?
@@ -162,5 +151,76 @@ class _QuranTabState extends State<QuranTab> {
         ],
       ),
     );
+  }
+
+  Widget builtMostRecentlyWidget() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          'Most Recently ',
+          style: AppStyles.bold16White,
+        ),
+        const SizedBox(
+          height: 10,
+        ),
+        Container(
+          decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(20),
+              color: AppColors.primaryDark),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    loadSura['suraEnName'] ?? "",
+                    style: AppStyles.bold24Black,
+                  ),
+                  Text(
+                    loadSura['suraArName'] ?? "",
+                    style: AppStyles.bold24Black,
+                  ),
+                  Text(
+                    '${loadSura['numOfVerses']} Verses' ?? "",
+                    style: AppStyles.bold18Black,
+                  ),
+                ],
+              ),
+              Image.asset('assets/images/most_recently_image.png')
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+
+  Future<void> saveLastSura(
+      {required String suraEnName,
+      required String suraArName,
+      required String numOfVerses}) async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setString('suraEnName', suraEnName);
+    await prefs.setString('suraArName', suraArName);
+    await prefs.setString('numOfVerses', numOfVerses);
+    await loadLastSura();
+  }
+
+  Future<Map<String, String>> getLastSura() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    String suraEnName = prefs.getString('suraEnName') ?? "";
+    String suraArName = prefs.getString('suraArName') ?? "";
+    String numOfVerses = prefs.getString('numOfVerses') ?? "";
+    return {
+      'suraEnName': suraEnName,
+      'suraArName': suraArName,
+      'numOfVerses': numOfVerses,
+    };
+  }
+
+  loadLastSura() async {
+    loadSura = await getLastSura();
+    setState(() {});
   }
 }

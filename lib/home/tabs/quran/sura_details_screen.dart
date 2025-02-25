@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:islami_sun3_c13/app_colors.dart';
+import 'package:islami_sun3_c13/utils/app_styles.dart';
+import '../../../utils/app_colors.dart';
 import 'package:islami_sun3_c13/model/sura_model.dart';
 
 class SuraDetailsScreen extends StatefulWidget {
@@ -26,7 +27,7 @@ class _SuraDetailsScreenState extends State<SuraDetailsScreen> {
       appBar: AppBar(
         title: Text(
           args.suraEnglishName,
-          style: TextStyle(color: AppColors.primaryDark),
+          style: AppStyles.bold24Primary,
         ),
       ),
       body: Stack(
@@ -48,7 +49,7 @@ class _SuraDetailsScreenState extends State<SuraDetailsScreen> {
               ),
               Text(
                 args.suraArabicName,
-                style: TextStyle(color: AppColors.primaryDark, fontSize: 24),
+                style: AppStyles.bold24Primary,
               ),
               SizedBox(
                 height: 25,
@@ -64,8 +65,7 @@ class _SuraDetailsScreenState extends State<SuraDetailsScreen> {
                             contentSura,
                             textDirection: TextDirection.rtl,
                             textAlign: TextAlign.center,
-                            style: TextStyle(
-                                color: AppColors.primaryDark, fontSize: 18),
+                            style: AppStyles.bold20Primary,
                           ),
                         )),
               // Expanded(

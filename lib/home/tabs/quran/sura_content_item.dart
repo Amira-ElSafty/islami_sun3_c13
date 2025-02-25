@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:islami_sun3_c13/app_colors.dart';
+
+import '../../../utils/app_colors.dart';
 
 class SuraContentItem extends StatelessWidget {
   String content;
